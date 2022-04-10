@@ -1,17 +1,6 @@
 import requests  # importa o módulo requests para fazer a requisição HTTP
 import time  # importa o módulo time para simular um delay
 from parsel import Selector  # importa o módulo parsel para fazer parse do HTML
-from tech_news.functions_get import (
-    get_url,
-    get_title,
-    get_timestamps,
-    get_writer,
-    get_shares_count,
-    get_comments_count,
-    get_summary,
-    get_sources,
-    get_categories
-)
 
 
 url_da_noticia = "https://www.tecmundo.com.br/novidades"
@@ -65,26 +54,13 @@ def scrape_next_page_link(html_content):
 # Requisito 4
 def scrape_noticia(html_content):
     selector = Selector(html_content)
-    title = get_title(selector)
-    timestamp = get_timestamps(selector)
-    writer = get_writer(selector)
-    shares_count = get_shares_count(selector)
-    comments_count = get_comments_count(selector)
-    summary = get_summary(selector)
-    sources = get_sources(selector)
-    categories = get_categories(selector)
 
     news = {}
     news['url'] = selector.css("link[rel=canonical]::attr(href)").get()
-    news['title'] = title
-    news['timestamp'] = timestamp
-    # método strip() é remove o espaço em branco do início e do final da string
-    news['writer'] = writer
-    news['shares_count'] = int(shares_count)
-    news['comments_count'] = int(comments_count)
-    news['summary'] = summary
-    news['sources'] = sources
-    news['categories'] = categories
+    news['title'] = selector.css("h1.tec--article__header__title::text").get()
+    news['timestamp'] = selector.css(
+        "time.tec--article__header__date::text").get()
+
     return news
 
 
