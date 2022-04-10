@@ -65,7 +65,6 @@ def scrape_next_page_link(html_content):
 # Requisito 4
 def scrape_noticia(html_content):
     selector = Selector(html_content)
-    url = get_url(selector)
     title = get_title(selector)
     timestamp = get_timestamps(selector)
     writer = get_writer(selector)
@@ -76,7 +75,7 @@ def scrape_noticia(html_content):
     categories = get_categories(selector)
 
     news = {}
-    news['url'] = url
+    news['url'] = selector.css("link[rel=canonical]::attr(href)").get()
     news['title'] = title
     news['timestamp'] = timestamp
     # método strip() é remove o espaço em branco do início e do final da string
