@@ -41,14 +41,20 @@ def search_by_date(date):
 def search_by_source(source):
     news_list = []
     # https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
-    # elemMatch retorna as notí que contenham a string no source
+    # elemMatch retorna as notícias que contenham a string na key source
     for new in db.news.find({
            "sources": {"$elemMatch": {"$regex": source, "$options": "i"}}}):
-        item = new["title"], new["url"]
-        news_list.append(item)
+        notice = new["title"], new["url"]
+        news_list.append(notice)
     return news_list
 
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    news_list = []
+    for new in db.news.find({
+            "categories": {"$elemMatch": {"$regex": category, "$options": "i"}}
+            }):
+        notice = new["title"], new["url"]
+        news_list.append(notice)
+    return news_list
