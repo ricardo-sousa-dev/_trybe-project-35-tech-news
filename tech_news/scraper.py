@@ -2,7 +2,7 @@ import re
 import requests  # importa o módulo requests para fazer a requisição HTTP
 import time  # importa o módulo time para simular um delay
 from parsel import Selector  # importa o módulo parsel para fazer parse do HTML
-import database  # módulo database para inserir os dados no banco de dados
+from tech_news.database import create_news  # para inserir os dados no banco
 
 
 url_da_noticia = "https://www.tecmundo.com.br/novidades"
@@ -98,4 +98,21 @@ def scrape_noticia(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Retorna uma lista de notícias"""
+    news = []
+    url = url_da_noticia
+    while amount > 0:
+        html_content = fetch(url)
+        if html_content is None:
+            break
+        news_list = scrape_novidades(html_content)
+        for url_notice in news_list:
+            html_content = fetch(url_notice)
+            if html_content is None:
+                break
+            news.append(scrape_noticia(html_content))
+        url = scrape_next_page_link(html_content)
+        amount -= len(news_list)
 
+    create_news(news)
+
+    return news
