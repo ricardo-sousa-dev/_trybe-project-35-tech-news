@@ -14,6 +14,7 @@ def search_by_title(title):
 
 def date_validator(string):
     try:
+        # https://docs.python.org/pt-br/3/library/datetime.html
         datetime.datetime.strptime(string, '%Y-%m-%d')
         return True
     except ValueError:
@@ -26,6 +27,7 @@ def search_by_date(date):
     news_list = []
 
     if date_validation:
+        # https://www.guru99.com/regular-expressions-mongodb.html
         for new in db.news.find({
                 "timestamp": {"$regex": date, "$options": "i"}}):
             notice = new["title"], new["url"]
@@ -37,7 +39,14 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    news_list = []
+    # https://www.mongodb.com/docs/manual/reference/operator/query/elemMatch/
+    # elemMatch retorna as notí que contenham a string no source
+    for new in db.news.find({
+           "sources": {"$elemMatch": {"$regex": source, "$options": "i"}}}):
+        item = new["title"], new["url"]
+        news_list.append(item)
+    return news_list
 
 
 # Requisito 9
